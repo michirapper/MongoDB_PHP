@@ -1,14 +1,4 @@
 <?php
-require 'vendor/autoload.php'; // incluir lo bueno de Composer
-$cliente = new MongoDB\Client("mongodb://localhost:27017");
-$colección = $cliente->ADAT_Vuelos->vuelo;
-
-//$resultado = $colección->insertOne( [ 'name' => 'Hinterland', 'brewery' => 'BrewDog' ] );
-//echo "Inserted with Object ID '{$resultado->getInsertedId()}'";
-
-?>
-
-<?php
 // require 'vendor/autoload.php'; // include Composer goodies
 // $cliente = new MongoDB\Client("mongodb://localhost:27017");
 // $colección = $cliente->ADAT_Vuelos->vuelo;
