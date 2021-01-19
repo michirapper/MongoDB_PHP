@@ -1,7 +1,20 @@
 <?php
-function borrarBillete(){
-	
 
+function actualizarBillete(){
+
+
+require 'vendor/autoload.php';
+$cliente = new MongoDB\Client("mongodb://localhost:27017");
+$coleccion = $cliente
+    ->ADAT_Vuelos->vuelo;
+
+$updateResult = $coleccion->updateOne(['vendidos.dni' => "33344455G", 'vendidos.codigoVenta' => "GHJ7766GG", 'codigo' => "IB706"], ['$set' => ["vendidos.$.apellido" => "extra large"]]);
+
+?>
+
+
+
+ <?php
 require 'vendor/autoload.php';
 $cliente = new MongoDB\Client("mongodb://localhost:27017");
 $coleccion = $cliente
@@ -10,7 +23,10 @@ $coleccion = $cliente
 $arrEsperado = array(
     "codigo" => "IB706",
     "dni" => "44556677H",
-    "codigoVenta" => "GHJ7766GG"
+    "codigoVenta" => "GHJ7766GG",
+    "dniM" => "44556677H",
+    "apellido" => "Rodriguez",
+    "nombre" => "María"
 );
 
 function JSONCorrectoAnnadir($recibido)
@@ -18,7 +34,7 @@ function JSONCorrectoAnnadir($recibido)
 
     $aux = false;
 
-    if (isset($recibido["codigo"]) && isset($recibido["dni"]) && isset($recibido["codigoVenta"]))
+    if (isset($recibido["codigo"]) && isset($recibido["dni"]) && isset($recibido["codigoVenta"]) && isset($recibido["dniM"]) && isset($recibido["apellido"]) && isset($recibido["nombre"]))
     {
         $aux = true;
     }
@@ -52,18 +68,11 @@ if (isset($parameters))
         $codigo = $mensajeRecibido["codigo"];
         $dni = $mensajeRecibido["dni"];
         $codigoVenta = $mensajeRecibido["codigoVenta"];
+        $dniM = $mensajeRecibido["dniM"];
+        $apellido = $mensajeRecibido["apellido"];
+        $nombre = $mensajeRecibido["nombre"];
 
-        $nuevosdatos = array(
-            '$pull' => array(
-                'vendidos' => array(
-                    'dni' => $dni,
-                    'codigoVenta' => $codigoVenta
-                )
-            )
-        );
-        $result = $coleccion->updateOne(array(
-            "codigo" => $codigo
-        ) , $nuevosdatos);
+        $result = $coleccion->updateOne(['vendidos.dni' => $dni, 'vendidos.codigoVenta' => $codigoVenta, 'codigo' => $codigo], ['$set' => ["vendidos.$.apellido" => $apellido, "vendidos.$.nombre" => $nombre, "vendidos.$.dni" => $dniM]]);
 
         if (isset($result) && $result)
         { // Si pasa por este if, la query está está bien y se ha insertado correctamente
@@ -73,7 +82,7 @@ if (isset($parameters))
         else
         { // Se ha producido algún error al ejecutar la query
             $arrMensaje["estado"] = "error";
-            $arrMensaje["mensaje"] = "No se ha podido borrar por error en la query";
+            $arrMensaje["mensaje"] = "No se ha podido modificar por error en la query";
 
         }
 
@@ -81,7 +90,7 @@ if (isset($parameters))
     else
     { // Nos ha llegado un json no tiene los campos necesarios
         $arrMensaje["estado"] = "error";
-        $arrMensaje["mensaje"] = "No se ha podido borrar por que los campos no tiene los datos correspondientes";
+        $arrMensaje["mensaje"] = "No se ha podido modificar por que los campos no tiene los datos correspondientes";
         $arrMensaje["recibido"] = $mensajeRecibido;
         $arrMensaje["esperado"] = $arrEsperado;
     }
@@ -90,7 +99,7 @@ if (isset($parameters))
 else
 { // No nos han enviado el json correctamente
     $arrMensaje["estado"] = "error";
-    $arrMensaje["mensaje"] = "No se ha podido borrar por error en los datos recibidos";
+    $arrMensaje["mensaje"] = "No se ha podido modificar por error en los datos recibidos";
 
 }
 

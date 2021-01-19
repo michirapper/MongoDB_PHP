@@ -1,23 +1,61 @@
 <?php
-// require 'vendor/autoload.php'; // include Composer goodies
-// $cliente = new MongoDB\Client("mongodb://localhost:27017");
-// $colección = $cliente->ADAT_Vuelos->vuelo;
-// $resultado = $colección->find( [ 'name' => 'Hinterland', 'brewery' => 'BrewDog' ] );
-// foreach ($resultado as $entry) {
-//     echo $entry['_id'], ': ', $entry['name'], "\n";
-// }
+function verBilletes(){
 
-?>
-<?php
+
 require 'vendor/autoload.php'; // include Composer goodies
 $cliente = new MongoDB\Client("mongodb://localhost:27017");
-$colección = $cliente->ADAT_Vuelos->vuelo;
+$colección = $cliente
+    ->ADAT_Vuelos->vuelo;
 
-$resultado = $colección->find();
+if (isset($_GET["fecha"]) && isset($_GET["origen"]) && isset($_GET["destino"]))
+{
+    $fechaParam = $_GET["fecha"];
+    $origenParam = $_GET["origen"];
+    $destinoParam = $_GET["destino"];
+
+    $resultado = $colección->find(['fecha' => $fechaParam, 'origen' => $origenParam, 'destino' => $destinoParam]);
+
+}
+elseif (isset($_GET["fecha"]))
+{
+    $fechaParam = $_GET["fecha"];
+    $resultado = $colección->find(['fecha' => $fechaParam]);
+}
+elseif (isset($_GET["origen"]))
+{
+    $origenParam = $_GET["origen"];
+    $resultado = $colección->find(['origen' => $origenParam]);
+}
+elseif (isset($_GET["destino"]))
+{
+    $destinoParam = $_GET["destino"];
+    $resultado = $colección->find(['destino' => $destinoParam]);
+}
+elseif (isset($_GET["fecha"]) && isset($_GET["origen"]))
+{
+    $fechaParam = $_GET["fecha"];
+    $origenParam = $_GET["origen"];
+    $resultado = $colección->find(['fecha' => $fechaParam, 'origen' => $origenParam]);
+}
+elseif (isset($_GET["fecha"]) && isset($_GET["destino"]))
+{
+    $fechaParam = $_GET["fecha"];
+    $destinoParam = $_GET["destino"];
+    $resultado = $colección->find(['fecha' => $fechaParam, 'origen' => $destinoParam]);
+}
+elseif (isset($_GET["origen"]) && isset($_GET["destino"]))
+{
+    $origenParam = $_GET["origen"];
+    $destinoParam = $_GET["destino"];
+    $resultado = $colección->find(['origen' => $origenParam, 'destino' => $destinoParam]);
+}
+else
+{
+    $resultado = $colección->find();
+}
+//$resultado = $colección->find( [  'origen' => "MADRID"] );
 $contador = 0;
 
-//var_dump($colección->count());
-//echo $colección->count();
 $sizeCollection = $colección->count();
 
 if (isset($resultado) && $resultado)
@@ -46,7 +84,6 @@ else
     $arrayMensaje["estado"] = "error";
     $arrayMensaje["mensaje"] = "Se ha producido un error al conectar con la BD";
 }
-
 if (isset($_GET["debug"]) && $_GET["debug"] == 1)
 {
     echo "<pre>";
@@ -56,5 +93,6 @@ if (isset($_GET["debug"]) && $_GET["debug"] == 1)
 else
 {
     echo $mensajeJSON;
+}
 }
 ?>
