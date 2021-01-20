@@ -121,9 +121,15 @@ if (isset($parameters))
 
         $asientoAsignado = $arrayAsientosLibres[0];
 
-        $nuevosdatos = array(
-            '$push' => array(
-                'vendidos' => array(
+        $nuevosdatos = array('$inc' => array(
+                    'plazas_disponibles' => -1
+        ));
+        $result = $coleccion->updateOne(array(
+            "codigo" => $codigo
+        ) , $nuevosdatos);
+
+        $nuevosdatos = array('$push' => array(
+                    'vendidos' => array(
                     'asiento' => $asientoAsignado,
                     'dni' => $dni,
                     'apellido' => $apellido,
@@ -137,6 +143,7 @@ if (isset($parameters))
         $result = $coleccion->updateOne(array(
             "codigo" => $codigo
         ) , $nuevosdatos);
+        
 
         if (isset($result) && $result)
         { // Si pasa por este if, la query está está bien y se ha insertado correctamente
@@ -159,7 +166,7 @@ if (isset($parameters))
         }
         else
         { // Se ha producido algún error al ejecutar la query
-            $arrMensaje["estado"] = "error";
+            $arrMensaje["estado"] = false;
             $arrMensaje["mensaje"] = "No se ha podido realizar la compra por error en la query";
 
         }
@@ -167,7 +174,7 @@ if (isset($parameters))
     }
     else
     { // Nos ha llegado un json no tiene los campos necesarios
-        $arrMensaje["estado"] = "error";
+        $arrMensaje["estado"] = false;
         $arrMensaje["mensaje"] = "No se ha podido realizar la compra por que los campos no tiene los datos correspondientes";
         $arrMensaje["recibido"] = $mensajeRecibido;
         $arrMensaje["esperado"] = $arrEsperado;
@@ -176,7 +183,7 @@ if (isset($parameters))
 }
 else
 { // No nos han enviado el json correctamente
-    $arrMensaje["estado"] = "error";
+    $arrMensaje["estado"] = false;
     $arrMensaje["mensaje"] = "No se ha podido realizar la compra por error en los datos recibidos";
 
 }

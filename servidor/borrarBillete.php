@@ -53,6 +53,13 @@ if (isset($parameters))
         $dni = $mensajeRecibido["dni"];
         $codigoVenta = $mensajeRecibido["codigoVenta"];
 
+        $nuevosdatos = array('$inc' => array(
+                    'plazas_disponibles' => +1
+        ));
+        $result = $coleccion->updateOne(array(
+            "codigo" => $codigo
+        ) , $nuevosdatos);
+
         $nuevosdatos = array(
             '$pull' => array(
                 'vendidos' => array(

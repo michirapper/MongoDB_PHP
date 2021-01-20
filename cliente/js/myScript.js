@@ -5,7 +5,7 @@ var miRuta;
 //miRuta = prompt ("Copia y pega la ruta de tu 'puerta de entrada'");
 
 if (miRuta != "") {
-  miRuta = "https://localhost/miguel/mongodb/servidor/billetes.php";
+  miRuta = "http://localhost/miguel/mongodb/servidor/billetes.php";
 }
 
 console.log("URL del servidor:" + miRuta);
