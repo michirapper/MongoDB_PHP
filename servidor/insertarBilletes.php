@@ -97,6 +97,7 @@ if (isset($parameters))
             $fecha = $entry['fecha'];
             $hora = $entry['hora'];
             $plazas_totales = $entry['plazas_totales'];
+            $precio = $entry['precio'];
             $arrayVendidos = ((array)$entry["vendidos"]);
         }
 
@@ -139,7 +140,7 @@ if (isset($parameters))
 
         if (isset($result) && $result)
         { // Si pasa por este if, la query está está bien y se ha insertado correctamente
-            $arrMensaje["estado"] = "true";
+            $arrMensaje["estado"] = true;
             $arrMensaje["codigo"] = $codigo;
             $arrMensaje["origen"] = $origen;
             $arrMensaje["destino"] = $destino;
@@ -153,7 +154,7 @@ if (isset($parameters))
             $arrMensaje["dniPagador"] = $dniPagador;
             $arrMensaje["tarjeta"] = $tarjeta;
             $arrMensaje["codigoVenta"] = $codigoVenta;
-            $arrMensaje["costeBillete"] = 0;
+            $arrMensaje["costeBillete"] = $precio;
 
         }
         else
