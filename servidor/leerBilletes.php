@@ -16,6 +16,24 @@ if (isset($_GET["fecha"]) && isset($_GET["origen"]) && isset($_GET["destino"]))
     $resultado = $colección->find(['fecha' => $fechaParam, 'origen' => $origenParam, 'destino' => $destinoParam]);
 
 }
+elseif (isset($_GET["origen"]) && isset($_GET["destino"]))
+{
+    $origenParam = $_GET["origen"];
+    $destinoParam = $_GET["destino"];
+    $resultado = $colección->find(['origen' => $origenParam, 'destino' => $destinoParam]);
+}
+elseif (isset($_GET["fecha"]) && isset($_GET["origen"]))
+{
+    $fechaParam = $_GET["fecha"];
+    $origenParam = $_GET["origen"];
+    $resultado = $colección->find(['fecha' => $fechaParam, 'origen' => $origenParam]);
+}
+elseif (isset($_GET["fecha"]) && isset($_GET["destino"]))
+{
+    $fechaParam = $_GET["fecha"];
+    $destinoParam = $_GET["destino"];
+    $resultado = $colección->find(['fecha' => $fechaParam, 'origen' => $destinoParam]);
+}
 elseif (isset($_GET["fecha"]))
 {
     $fechaParam = $_GET["fecha"];
@@ -31,24 +49,6 @@ elseif (isset($_GET["destino"]))
     $destinoParam = $_GET["destino"];
     $resultado = $colección->find(['destino' => $destinoParam]);
 }
-elseif (isset($_GET["fecha"]) && isset($_GET["origen"]))
-{
-    $fechaParam = $_GET["fecha"];
-    $origenParam = $_GET["origen"];
-    $resultado = $colección->find(['fecha' => $fechaParam, 'origen' => $origenParam]);
-}
-elseif (isset($_GET["fecha"]) && isset($_GET["destino"]))
-{
-    $fechaParam = $_GET["fecha"];
-    $destinoParam = $_GET["destino"];
-    $resultado = $colección->find(['fecha' => $fechaParam, 'origen' => $destinoParam]);
-}
-elseif (isset($_GET["origen"]) && isset($_GET["destino"]))
-{
-    $origenParam = $_GET["origen"];
-    $destinoParam = $_GET["destino"];
-    $resultado = $colección->find(['origen' => $origenParam, 'destino' => $destinoParam]);
-}
 else
 {
     $resultado = $colección->find();
@@ -57,6 +57,7 @@ else
 $contador = 0;
 
 $sizeCollection = $colección->count();
+$arrayVuelos = array();
 
 if (isset($resultado) && $resultado)
 {
@@ -65,18 +66,32 @@ if (isset($resultado) && $resultado)
         foreach ($resultado as $entry)
         {
             //echo $entry['_id'], ': ', $entry['codigo'], "<br/>";
-            $arrayVuelos[] = $entry;
+           
+           
+            $arrayVuelo = array();
+            $arrayVuelo["codigo"] = $entry["codigo"];
+            $arrayVuelo["origen"] = $entry["origen"];
+            $arrayVuelo["destino"] = $entry["destino"];
+            $arrayVuelo["fecha"] = $entry["fecha"];
+            $arrayVuelo["hora"] = $entry["hora"];
+            $arrayVuelo["plazas_totales"] = $entry["plazas_totales"];
+            $arrayVuelo["plazas_disponibles"] = $entry["plazas_disponibles"];
+            $arrayVuelo["precio"] = $entry["precio"];
+            
+           // $arrayVuelos[] = $entry;
+            $arrayVuelos[] = $arrayVuelo;
+           
             $contador++;
         }
-        $arrayMensaje["estado"] = "ok";
-        $arrayMensaje["numeroVuelos"] = $contador;
+        $arrayMensaje["estado"] = true;
+        $arrayMensaje["encontrados"] = $contador;
         $arrayMensaje["vuelos"] = $arrayVuelos;
         $mensajeJSON = json_encode($arrayMensaje, JSON_PRETTY_PRINT);
     }
     else
     {
-        $arrayMensaje["estado"] = "ok";
-        $arrayMensaje["numeroVuelos"] = 0;
+        $arrayMensaje["estado"] = true;
+        $arrayMensaje["encontrados"] = 0;
     }
 }
 else
