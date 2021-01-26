@@ -4,8 +4,8 @@ function verBilletes(){
 
 require 'vendor/autoload.php'; // include Composer goodies
 $cliente = new MongoDB\Client("mongodb://localhost:27017");
-$colección = $cliente
-    ->ADAT_Vuelos->vuelo;
+$colección = $cliente->ADAT_Vuelos->vuelo;
+$arrayBusqueda = array();
 
 if (isset($_GET["fecha"]) && isset($_GET["origen"]) && isset($_GET["destino"]))
 {
@@ -14,6 +14,9 @@ if (isset($_GET["fecha"]) && isset($_GET["origen"]) && isset($_GET["destino"]))
     $destinoParam = $_GET["destino"];
 
     $resultado = $colección->find(['fecha' => $fechaParam, 'origen' => $origenParam, 'destino' => $destinoParam]);
+    $arrayBusqueda["fecha"] = $fechaParam;
+    $arrayBusqueda["origen"] = $origenParam;
+    $arrayBusqueda["destino"] = $destinoParam;
 
 }
 elseif (isset($_GET["origen"]) && isset($_GET["destino"]))
@@ -21,33 +24,42 @@ elseif (isset($_GET["origen"]) && isset($_GET["destino"]))
     $origenParam = $_GET["origen"];
     $destinoParam = $_GET["destino"];
     $resultado = $colección->find(['origen' => $origenParam, 'destino' => $destinoParam]);
+    $arrayBusqueda["origen"] = $origenParam;
+    $arrayBusqueda["destino"] = $destinoParam;
 }
 elseif (isset($_GET["fecha"]) && isset($_GET["origen"]))
 {
     $fechaParam = $_GET["fecha"];
     $origenParam = $_GET["origen"];
     $resultado = $colección->find(['fecha' => $fechaParam, 'origen' => $origenParam]);
+    $arrayBusqueda["fecha"] = $fechaParam;
+    $arrayBusqueda["origen"] = $origenParam;
 }
 elseif (isset($_GET["fecha"]) && isset($_GET["destino"]))
 {
     $fechaParam = $_GET["fecha"];
     $destinoParam = $_GET["destino"];
     $resultado = $colección->find(['fecha' => $fechaParam, 'origen' => $destinoParam]);
+    $arrayBusqueda["fecha"] = $fechaParam;
+    $arrayBusqueda["destino"] = $destinoParam;
 }
 elseif (isset($_GET["fecha"]))
 {
     $fechaParam = $_GET["fecha"];
     $resultado = $colección->find(['fecha' => $fechaParam]);
+    $arrayBusqueda["fecha"] = $fechaParam;
 }
 elseif (isset($_GET["origen"]))
 {
     $origenParam = $_GET["origen"];
     $resultado = $colección->find(['origen' => $origenParam]);
+    $arrayBusqueda["origen"] = $origenParam;
 }
 elseif (isset($_GET["destino"]))
 {
     $destinoParam = $_GET["destino"];
     $resultado = $colección->find(['destino' => $destinoParam]);
+    $arrayBusqueda["destino"] = $destinoParam;
 }
 else
 {
@@ -85,6 +97,7 @@ if (isset($resultado) && $resultado)
         }
         $arrayMensaje["estado"] = true;
         $arrayMensaje["encontrados"] = $contador;
+        $arrayMensaje["busqueda"] = $arrayBusqueda;
         $arrayMensaje["vuelos"] = $arrayVuelos;
         $mensajeJSON = json_encode($arrayMensaje, JSON_PRETTY_PRINT);
     }
